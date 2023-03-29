@@ -38,4 +38,13 @@ class AuthController extends Controller
             return back()->withInput()->with('error', 'login gagal');
         }
     }
+    public function logout()
+    {
+        try {
+            Auth::logout();
+            return redirect('/')->with('success', 'logout berhasil');
+        } catch (\Throwable $th) {
+            return back()->withInput()->with('error', 'logout gagal');
+        }
+    }
 }

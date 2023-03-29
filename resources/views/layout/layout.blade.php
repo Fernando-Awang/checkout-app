@@ -15,10 +15,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" aria-current="page" href="#">Product</a>
+                    <a class="nav-link" aria-current="page" href="/product">Product</a>
+                    @if (isset(auth()->user()->id))
                     <a class="nav-link" href="#">Cart</a>
                     <a class="nav-link" href="#">Transaction</a>
-                    <a class="nav-link" href="#">Logout</a>
+                    <a class="nav-link" href="/logout">Logout</a>
+                    @else
+                    <a class="nav-link" href="/login">Login</a>
+                    @endif
                 </div>
             </div>
         </div>
