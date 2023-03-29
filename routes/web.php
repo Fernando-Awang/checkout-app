@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,18 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', function () {
-    return redirect('/product');
+    return redirect('product');
 });
-Route::get('/login', function () {
+Route::get('login', function () {
     return view('page.login');
 })->name('login');
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout']);
 
-Route::get('/product', [ProductController::class, 'index']);
-Route::get('/product/{id}', [ProductController::class, 'show']);
+Route::get('product', [ProductController::class, 'index']);
+Route::get('product/{id}', [ProductController::class, 'show']);
 
 Route::middleware('auth')->group(function(){
+    Route::resource('cart', CartController::class)->except('show');
 
 });

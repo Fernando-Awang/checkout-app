@@ -17,7 +17,7 @@
                 <div class="navbar-nav">
                     <a class="nav-link" aria-current="page" href="/product">Product</a>
                     @if (isset(auth()->user()->id))
-                    <a class="nav-link" href="#">Cart</a>
+                    <a class="nav-link" href="/cart">Cart</a>
                     <a class="nav-link" href="#">Transaction</a>
                     <a class="nav-link" href="/logout">Logout</a>
                     @else
@@ -35,6 +35,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script>
         const Toast = Swal.mixin({
             toast: true,
