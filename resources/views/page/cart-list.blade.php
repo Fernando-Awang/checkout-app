@@ -1,7 +1,7 @@
 @extends('layout.layout')
 @section('content')
 <div class="row">
-    <div class="col-sm-12 col-md-8">
+    <div class="col-sm-12 col-md-4">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
