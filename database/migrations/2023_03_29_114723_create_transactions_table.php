@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('order_id');
+            $table->string('snap_token');
             $table->foreignId('user_id')->constrained('users');
             $table->integer('total');
             $table->dateTime('checkout_date');
-            $table->dateTime('payment_date');
+            $table->dateTime('payment_date')->nullable();
             $table->enum('payment_status', ['pending', 'settlement', 'expire',  'cancel', 'deny'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
