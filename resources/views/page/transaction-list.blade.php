@@ -21,12 +21,13 @@
                         <td>{{formatRupiah($item->total)}}</td>
                         <td>
                             <a href="/transaction/detail/{{$item->id}}">detail</a>
+                            @if ($item->payment_status != 'settlement')
+                            |
+                            <a href="javascript:void(0)" onclick="confirmDelete('{{$item->id}}')">delete</a>
+                            @endif
                             @if ($item->payment_status == 'pending')
                             |
                             <a href="javascript:void(0)" onclick="pay('{{$item->snap_token}}')">pay</a>
-                            @else
-                            |
-                            <a href="javascript:void(0)" onclick="confirmDelete('{{$item->id}}')">delete</a>
                             @endif
                         </td>
                     </tr>

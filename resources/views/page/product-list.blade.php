@@ -9,6 +9,7 @@
                     <tr>
                         <th class="text-left">#</th>
                         <th class="text-left">Name</th>
+                        <th class="text-left">Stock</th>
                         <th class="text-left"></th>
                     </tr>
                 </thead>
@@ -17,6 +18,7 @@
                     <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{$item->name}}</td>
+                        <td>{{$item->sku}}</td>
                         <td><a href="/product/{{$item->id}}">detail</a></td>
                     </tr>
                     @endforeach

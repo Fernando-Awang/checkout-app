@@ -275,15 +275,19 @@ class TransactionController extends Controller
         }
     }
 
-    
+
     public function destroy($id)
     {
         try {
 
-            Transaction::where([
+            $transaction = Transaction::where([
                 'user_id' => userId(),
                 'id' => $id,
-            ])->delete();
+            ])->first();
+            if ($transaction->payment_status == 'settlement') {
+                return
+                    sendResponseJson(true, "can't delete transaction" . $transaction->order_id);
+            }
 
             return
                 sendResponseJson(true, 'transaction deleted');
