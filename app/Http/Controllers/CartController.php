@@ -23,10 +23,25 @@ class CartController extends Controller
 
     private function storeValidation()
     {
-        return Validator::make(request()->all(), [
-            'product_id' => 'required',
-            'qty' => 'required|numeric',
-        ]);
+        try {
+            $validator = Validator::make(request()->all(), [
+                'product_id' => 'required',
+                'qty' => 'required|numeric',
+            ]);
+            if ($validator->fails()) {
+                return back()->withInput()->with('error', $validator->errors()->first());
+            }
+
+            // check product on cart
+            $product = Cart::where('product_id', request('product_id'));
+            if ($product->exists()) {
+                return back()->withInput()->with('error', 'produk telah ditambahkan');
+            }
+
+            return true;
+        } catch (\Throwable $th) {
+            return back()->withInput()->with('error', $th->getMessage());
+        }
     }
 
 
@@ -35,8 +50,8 @@ class CartController extends Controller
         try {
             // validation
             $validation = $this->storeValidation();
-            if ($validation->fails()) {
-                return back()->withInput()->with('error', $validation->errors()->first());
+            if ($validation!==true) {
+                return $validation;
             }
             Cart::create([
                 'user_id' => userId(),
@@ -70,17 +85,25 @@ class CartController extends Controller
 
     private function updateValidation()
     {
-        return Validator::make(request()->all(), [
-            'qty' => 'required|numeric',
-        ]);
+        try {
+            $validator = Validator::make(request()->all(), [
+                'qty' => 'required|numeric',
+            ]);
+            if ($validator->fails()) {
+                return back()->withInput()->with('error', $validator->errors()->first());
+            }
+            return true;
+        } catch (\Throwable $th) {
+            return back()->withInput()->with('error', $th->getMessage());
+        }
     }
     public function update($id)
     {
         try {
             // validation
             $validation = $this->updateValidation();
-            if ($validation->fails()) {
-                return back()->withInput()->with('error', $validation->errors()->first());
+            if ($validation !== true) {
+                return $validation;
             }
 
             $data = Cart::find($id);
