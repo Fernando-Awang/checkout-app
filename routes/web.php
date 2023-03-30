@@ -35,3 +35,5 @@ Route::middleware('auth')->group(function(){
 });
 Route::get('/transaction/confirm', [TransactionController::class, 'confirmCheckout']);
 Route::post('/transaction/create', [TransactionController::class, 'store']);
+Route::get('/transaction/index', [TransactionController::class, 'index']);
+Route::get('/transaction/detail/{id}', [TransactionController::class, 'detail']);

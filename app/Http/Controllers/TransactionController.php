@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Transaction;
+use App\Models\TransactionDetails;
+use App\Traits\Midtrans;
+use App\Traits\UpdateSkuProduct;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    use Midtrans, UpdateSkuProduct;
+
     private $cartData;
     private $dataTransactionDetail;
     private $dataTransaction;
@@ -80,9 +87,41 @@ class TransactionController extends Controller
     private function setMidtransParam()
     {
         try {
-            $midtransParam = [];
+            // transaction details
+            $transaction_details = [];
+            $transaction_details['order_id'] = (string)($this->dataTransaction['order_id']);
+            $transaction_details['gross_amount'] = (int)($this->dataTransaction['total']);
 
-            $this->midtransParam = $midtransParam;
+            //customer details
+            $customer_details = [];
+            $customer_details['first_name'] = (string)(auth()->user()->name);
+            $customer_details['email'] = (string)(auth()->user()->email);
+
+            // item details
+            $item_details = [];
+
+
+            $idItem = 1;
+            // detail transaksi
+            foreach ($this->dataTransactionDetail as $item) {
+                // items
+                $items = [];
+                $items['id'] = (string)$idItem;
+                $items['name'] = (string)$item['product_name'];
+                $items['price'] = (int)($item['price']);
+                $items['quantity'] = (int)($item['qty']);
+                $item_details[] = $items;
+
+                $idItem = $idItem + 1;
+            }
+
+
+            $params = [];
+            $params['transaction_details'] = $transaction_details;
+            $params['customer_details'] = $customer_details;
+            $params['item_details'] = $item_details;
+
+            $this->midtransParam = $params;
             return
             true;
         } catch (\Throwable $th) {
@@ -117,8 +156,25 @@ class TransactionController extends Controller
         }
     }
 
+    // validate isset transaction
+    private function checkPendingTransaction()
+    {
+        try {
+            $transaction = Transaction::where([
+                'user_id' => userId(),
+                'payment_stats' => 'pending',
+            ]);
+            if ($transaction->exists()) {
+                return redirect('/transaction/index')->with('error', 'please complete your unpaid transaction');
+            }
+            return true;
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
     public function store()
     {
+        DB::beginTransaction();
         try {
             $cart_id = json_decode(request('cart_id'));
             // restructure data cart
@@ -141,13 +197,69 @@ class TransactionController extends Controller
             if ($setData !== true) {
                 return $setData;
             }
-            return ([
-                'transaction' => $this->dataTransaction,
-                'transaction_detail' => $this->dataTransactionDetail,
-                'modtrans_param' => $this->midtransParam,
+
+            $snap_token = $this->generateSnapToken($this->midtransParam);
+            $this->dataTransaction['snap_token'] = $snap_token;
+
+            $transaction = Transaction::create($this->dataTransaction);
+            foreach ($this->dataTransactionDetail as $item) {
+
+                $item['transaction_id'] = $transaction->id;
+
+                TransactionDetails::create($item);
+
+                $product_id = $item['product_id'];
+                $qty = $item['qty'];
+
+                $this->updateSkuProduct($product_id, $qty, 'minus');
+
+                Cart::whereIn('id', $cart_id)->delete();
+            }
+
+            DB::commit();
+            return redirect('/transaction/index')->with('success', 'create transaction success');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
+    public function index()
+    {
+        try {
+            $transaction = Transaction::where('user_id', userId())->get();
+            return
+            view('page.transaction-list', [
+                'transaction' => $transaction,
+                'jsSnap' => $this->jsSnap(),
+                'clientKey' => $this->midtransClientKey(),
             ]);
         } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
+            return
+            back()->with('error', $th->getMessage());
+            ;
+        }
+    }
+    public function detail($id)
+    {
+        try {
+            $transaction = Transaction::where([
+                'user_id'=> userId(),
+                'id'=> $id,
+            ])->first();
+            $transaction_detail = TransactionDetails::where('transaction_id', $id)->get();
+
+            return
+            view('page.transaction-detail', [
+                'transaction' => $transaction,
+                'transaction_detail' => $transaction_detail,
+                'jsSnap' => $this->jsSnap(),
+                'clientKey' => $this->midtransClientKey(),
+            ]);
+        } catch (\Throwable $th) {
+            return
+            back()->with('error', $th->getMessage());
+            ;
         }
     }
 }

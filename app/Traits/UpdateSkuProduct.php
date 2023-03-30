@@ -11,11 +11,10 @@ trait UpdateSkuProduct {
             $product = new Product();
             $product = $product->find($product_id);
 
-            $stockBefore = $product->stock;
-            $stockAfter = $stockBefore;
+            $stockBefore = $product->sku;   
             switch ($status) {
-                case 'minus': $stockAfter = $stockBefore - $qty; break;
-                default: $stockAfter = $stockBefore + $qty; break;
+                case 'minus': $stockAfter = (int)($stockBefore) - (int)($qty); break;
+                default: $stockAfter = (int)($stockBefore) + (int)($qty); break;
             }
 
             $product->sku = $stockAfter;
