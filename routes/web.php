@@ -32,3 +32,6 @@ Route::middleware('auth')->group(function(){
     Route::resource('cart', CartController::class)->except('show');
 
 });
+Route::get('/transaction/confirm', function () {
+    return request()->all();
+});
