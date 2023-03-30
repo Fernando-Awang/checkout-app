@@ -55,7 +55,9 @@
             </table>
         </div>
         <br>
+        @if ($transaction->payment_status == 'pending')
         <button type="button" class="btn btn-primary" onclick="pay('{{$transaction->snap_token}}')">pay</button>
+        @endif
         <a href="/transaction/index" class="btn btn-info float-end text-light">back</a>
     </div>
 </div>
@@ -81,6 +83,20 @@
                 }
             }
         );
+    }
+
+    $(function(){
+        setInterval(() => {
+            checkPayment('{{$transaction->id}}', '{{$transaction->payment_status}}')
+        }, 3000);
+    })
+
+    function checkPayment(id, payment_status) {
+        $.get('/transaction/check-status/'+id, function (status) {
+            if (status != 'error' && status != payment_status) {
+                location.reload();
+            }
+        })
     }
 </script>
 @endpush

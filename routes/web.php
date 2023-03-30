@@ -32,8 +32,16 @@ Route::get('product/{id}', [ProductController::class, 'show']);
 Route::middleware('auth')->group(function(){
     Route::resource('cart', CartController::class)->except('show');
 
+    Route::get('/transaction/confirm', [TransactionController::class, 'confirmCheckout']);
+    Route::post('/transaction/create', [TransactionController::class, 'store']);
+    Route::get('/transaction/index', [TransactionController::class, 'index']);
+    Route::get('/transaction/detail/{id}', [TransactionController::class, 'detail']);
+
+    Route::get('/transaction/check-status/{id}', [TransactionController::class, 'check']);
 });
-Route::get('/transaction/confirm', [TransactionController::class, 'confirmCheckout']);
-Route::post('/transaction/create', [TransactionController::class, 'store']);
-Route::get('/transaction/index', [TransactionController::class, 'index']);
-Route::get('/transaction/detail/{id}', [TransactionController::class, 'detail']);
+
+if (strtolower(env('APP_ENV')) != 'production') {
+    Route::get('/snap', function () {
+        return view('midtrans');
+    });
+}

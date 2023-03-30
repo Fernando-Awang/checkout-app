@@ -262,4 +262,16 @@ class TransactionController extends Controller
             ;
         }
     }
+
+    public function check($id)
+    {
+        try {
+
+            $transaction = Transaction::where('id', $id)->first();
+            return
+            $transaction->payment_status ?? 'error';
+        } catch (\Throwable $th) {
+            return 'error';
+        }
+    }
 }
