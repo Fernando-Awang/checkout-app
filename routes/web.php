@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,5 @@ Route::middleware('auth')->group(function(){
     Route::resource('cart', CartController::class)->except('show');
 
 });
-Route::get('/transaction/confirm', function () {
-    return request()->all();
-});
+Route::get('/transaction/confirm', [TransactionController::class, 'confirmCheckout']);
+Route::post('/transaction/create', [TransactionController::class, 'store']);
