@@ -35,7 +35,7 @@ class CartController extends Controller
             // check product on cart
             $product = Cart::where('product_id', request('product_id'));
             if ($product->exists()) {
-                return back()->withInput()->with('error', 'produk telah ditambahkan');
+                return back()->withInput()->with('error', 'product already exists');
             }
 
             return true;
@@ -60,11 +60,11 @@ class CartController extends Controller
             ]);
 
             return
-            back()->with('success', 'item ditambahkan ke keranjang');
+            back()->with('success', 'success add to cart');
         } catch (\Throwable $th) {
             return
             $th;
-            back()->with('error', 'terjadi error')->withInput();
+            back()->with('error', 'error')->withInput();
         }
     }
 
@@ -111,10 +111,10 @@ class CartController extends Controller
             $data->save();
 
             return
-            back()->with('success', 'Qty diupdate');
+            back()->with('success', 'Qty updated');
         } catch (\Throwable $th) {
             return
-            back()->with('error', 'terjadi error')->withInput();
+            back()->with('error', 'error')->withInput();
         }
     }
     public function destroy($id)
@@ -126,10 +126,10 @@ class CartController extends Controller
             $data->delete();
 
             return
-            sendResponseJson(true, 'item dihapus');
+            sendResponseJson(true, 'item deleted');
         } catch (\Throwable $th) {
             return
-            sendResponseJson(false, 'item gagal dihapus');
+            sendResponseJson(false, 'item error on deleted');
         }
     }
 }

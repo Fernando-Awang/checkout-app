@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/transaction/create', [TransactionController::class, 'store']);
     Route::get('/transaction/index', [TransactionController::class, 'index']);
     Route::get('/transaction/detail/{id}', [TransactionController::class, 'detail']);
+    Route::delete('/transaction/delete/{id}', [TransactionController::class, 'destroy']);
 
     Route::get('/transaction/check-status/{id}', [TransactionController::class, 'check']);
 });

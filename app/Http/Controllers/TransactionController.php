@@ -274,4 +274,22 @@ class TransactionController extends Controller
             return 'error';
         }
     }
+
+    
+    public function destroy($id)
+    {
+        try {
+
+            Transaction::where([
+                'user_id' => userId(),
+                'id' => $id,
+            ])->delete();
+
+            return
+                sendResponseJson(true, 'transaction deleted');
+        } catch (\Throwable $th) {
+            return
+                sendResponseJson(false, 'error delete transaction');
+        }
+    }
 }

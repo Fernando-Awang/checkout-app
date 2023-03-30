@@ -30,21 +30,21 @@ class AuthController extends Controller
 
             $auth = Auth::attempt($cresidential);
             if (!$auth) {
-                return back()->withInput()->with('error', 'akun tidak ditemukan');
+                return back()->withInput()->with('error', 'account not found');
             }
 
-            return redirect('/product')->with('success', 'login berhasil');
+            return redirect('/product')->with('success', 'login success');
         } catch (\Throwable $th) {
-            return back()->withInput()->with('error', 'login gagal');
+            return back()->withInput()->with('error', 'login error');
         }
     }
     public function logout()
     {
         try {
             Auth::logout();
-            return redirect('/')->with('success', 'logout berhasil');
+            return redirect('/')->with('success', 'logout success');
         } catch (\Throwable $th) {
-            return back()->withInput()->with('error', 'logout gagal');
+            return back()->withInput()->with('error', 'logout error');
         }
     }
 }

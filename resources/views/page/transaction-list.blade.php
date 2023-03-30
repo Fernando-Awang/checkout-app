@@ -25,6 +25,8 @@
                             |
                             <a href="javascript:void(0)" onclick="pay('{{$item->snap_token}}')">pay</a>
                             @else
+                            |
+                            <a href="javascript:void(0)" onclick="confirmDelete('{{$item->id}}')">delete</a>
                             @endif
                         </td>
                     </tr>
@@ -56,6 +58,45 @@
                 }
             }
         );
+    }
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Confirm',
+            text: "Delete data?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete it',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                return drop(id)
+            }
+        })
+    }
+    function drop(id) {
+        $.ajax({
+            url : '/transaction/delete/' + id,
+            type : 'delete',
+            data : {
+                _token: '{{csrf_token()}}'
+            },
+            success:function(response){
+                if(response.success){
+                    SuccessModal(response.message).then(function(){
+                        location.reload()
+                    })
+                    return;
+                }
+                ErrorModal(response.message)
+            },
+            error:function(response){
+                console.log(response);
+                ErrorModal('terjadi kesalahan')
+            },
+        })
     }
 </script>
 @endpush
