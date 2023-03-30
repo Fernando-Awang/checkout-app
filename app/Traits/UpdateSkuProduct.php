@@ -5,7 +5,7 @@ namespace App\Traits;
 use App\Models\Product;
 
 trait UpdateSkuProduct {
-    public function generateSnapToken($product_id, $qty, $status='add')
+    public function updateSkuProduct($product_id, $qty, $status='add')
     {
         try {
             $product = new Product();
